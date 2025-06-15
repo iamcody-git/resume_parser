@@ -1,11 +1,107 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homepage</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resume Upload</title>
+  <link rel="stylesheet" href={% static 'style.css' %}>
 </head>
 <body>
-    <h1>ATS Resume Parser</h1>
+  <nav class="navbar">
+  <div class="nav-left">ATS Resume Parser</div>
+
+  <div class="nav-center">
+    <div class="dropdown">
+      <button class="dropbtn">Resume ⌄</button>
+      <div class="dropdown-content">
+        <a href="#">Write Resume</a>
+        <a href="#">Templates</a>
+        <a href="#">Samples</a>
+      </div>
+    </div>
+    <a href="#" class="nav-link">Blog</a>
+  </div>
+
+  <div class="nav-right">
+    <a href="#" class="nav-link">Login</a>
+    <button class="get-started-btn">Get Started</button>
+  </div>
+</nav>
+
+<h1 style="color:white";> ATS Resume Screening</h1>
+
+  <div class="upload-container" id="drop-area">
+    <div class="upload-icon">⭳</div>
+
+    <!-- File input -->
+    <input type="file" id="file-input" accept=".pdf,.docx" />
+
+    <!-- Click upload -->
+    <button class="upload-button" id="upload-btn">Upload Your Resume</button>
+
+    <p class="instruction">
+      Drop your resume here or choose a file.<br />
+      <strong>PDF & DOCX only. Max 2MB file size.</strong>
+    </p>
+
+    <div class="preview" id="preview-text">No file selected</div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById("file-input");
+    const uploadBtn = document.getElementById("upload-btn");
+    const dropArea = document.getElementById("drop-area");
+    const previewText = document.getElementById("preview-text");
+
+    // Trigger file input on button click
+    uploadBtn.addEventListener("click", () => fileInput.click());
+
+    // Handle file selection
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        showFileDetails(file);
+      }
+    });
+
+    // Drag-and-drop handlers
+    dropArea.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropArea.classList.add("dragover");
+    });
+
+    dropArea.addEventListener("dragleave", () => {
+      dropArea.classList.remove("dragover");
+    });
+
+    dropArea.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropArea.classList.remove("dragover");
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        fileInput.files = e.dataTransfer.files; // Link drop to input
+        showFileDetails(file);
+      }
+    });
+
+    function showFileDetails(file) {
+      const allowedTypes = ['application/pdf', 
+                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const maxSize = 2 * 1024 * 1024; // 2MB
+
+      if (!allowedTypes.includes(file.type)) {
+        previewText.innerText = "❌ Invalid file type!";
+        return;
+      }
+
+      if (file.size > maxSize) {
+        previewText.innerText = "❌ File size exceeds 2MB!";
+        return;
+      }
+
+      previewText.innerText = `✅ Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+    }
+  </script>
 </body>
 </html>
